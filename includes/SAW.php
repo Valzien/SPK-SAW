@@ -120,53 +120,112 @@ class SAW {
     public function hitung(): array {
         $kriteria = $this->getAllKriteria();
         $matrix   = $this->getNilaiMatrix();
-        if (empty($kriteria)||empty($matrix)) return [];
 
-        // 1. Max & Min
+        if (empty($kriteria) || empty($matrix)) {
+            return [];
+        }
+
+        // 1. Cari nilai Max & Min tiap kriteria
         $maxMin = [];
         foreach ($kriteria as $k) {
-            $vals = array_map(fn($a)=>$a['nilai'][$k['id']]['nilai']??0, $matrix);
-            $maxMin[$k['id']] = ['max'=>max($vals),'min'=>min($vals)];
+            $vals = array_map(
+                fn($a) => $a['nilai'][$k['id']]['nilai'] ?? 0,
+                $matrix
+            );
+
+            $maxMin[$k['id']] = [
+                'max' => max($vals),
+                'min' => min($vals)
+            ];
         }
 
-        // 2. Normalisasi rij
+        // 2. Normalisasi
         $normMatrix = [];
+
         foreach ($matrix as $alt) {
-            $normRow = [];
             foreach ($kriteria as $k) {
-                $xij = $alt['nilai'][$k['id']]['nilai']??0;
+
+                $xij = $alt['nilai'][$k['id']]['nilai'] ?? 0;
                 $max = $maxMin[$k['id']]['max'];
                 $min = $maxMin[$k['id']]['min'];
-                $normRow[$k['id']] = $k['tipe']==='benefit'
-                    ? ($max!=0 ? $xij/$max : 0)
-                    : ($xij!=0 ? $min/$xij : 0);
+
+                if ($k['tipe'] === 'benefit') {
+                    $normMatrix[$alt['id']][$k['id']] = ($max > 0)
+                        ? $xij / $max
+                        : 0;
+                } else {
+                    $normMatrix[$alt['id']][$k['id']] = ($xij > 0)
+                        ? $min / $xij
+                        : 0;
+                }
             }
-            $normMatrix[$alt['id']] = $normRow;
         }
 
-        // 3. Nilai Vi
+        // 3. Hitung nilai preferensi (Vi)
         $hasil = [];
+
         foreach ($matrix as $alt) {
+
             $vi = 0;
+
             foreach ($kriteria as $k) {
-                $vi += (float)$k['bobot'] * ($normMatrix[$alt['id']][$k['id']]??0);
+                $vi += $k['bobot'] * $normMatrix[$alt['id']][$k['id']];
             }
+
             $hasil[] = [
-                'alt_id'=>$alt['id'],'alt_kode'=>$alt['kode'],'alt_nama'=>$alt['nama'],
-                'vi'=>$vi,'norm'=>$normMatrix[$alt['id']],'raw'=>$alt['nilai'],
+                'alt_id'   => $alt['id'],
+                'alt_kode' => $alt['kode'],
+                'alt_nama' => $alt['nama'],
+                'vi'       => $vi,
+                'norm'     => $normMatrix[$alt['id']],
+                'raw'      => $alt['nilai']
             ];
         }
 
         // 4. Ranking
-        usort($hasil, fn($a,$b)=>$b['vi']<=>$a['vi']);
-        foreach ($hasil as $i=>&$h) $h['peringkat']=$i+1;
+        usort($hasil, fn($a, $b) => $b['vi'] <=> $a['vi']);
 
-        // 5. Simpan hasil
-        $this->db->exec("DELETE FROM hasil");
-        $stmt = $this->db->prepare("INSERT INTO hasil (alternatif_id,nilai_vi,peringkat) VALUES (?,?,?)");
-        foreach ($hasil as $h) $stmt->execute([$h['alt_id'],$h['vi'],$h['peringkat']]);
+        // TANPA REFERENCE (&)
+        foreach ($hasil as $i => $item) {
+            $hasil[$i]['peringkat'] = $i + 1;
+        }
 
-        return ['hasil'=>$hasil,'kriteria'=>$kriteria,'maxMin'=>$maxMin,'matrix'=>$matrix,'norm'=>$normMatrix];
+        // 5. Simpan ke database
+        $this->db->beginTransaction();
+
+        try {
+
+            $this->db->exec("DELETE FROM hasil");
+
+            $stmt = $this->db->prepare("
+                INSERT INTO hasil (alternatif_id, nilai_vi, peringkat)
+                VALUES (?, ?, ?)
+            ");
+
+            foreach ($hasil as $h) {
+                $stmt->execute([
+                    $h['alt_id'],
+                    $h['vi'],
+                    $h['peringkat']
+                ]);
+            }
+
+            $this->db->commit();
+
+        } catch (Exception $e) {
+
+            $this->db->rollBack();
+            throw $e;
+
+        }
+
+        return [
+            'hasil'     => $hasil,
+            'kriteria'  => $kriteria,
+            'maxMin'    => $maxMin,
+            'matrix'    => $matrix,
+            'norm'      => $normMatrix
+        ];
     }
 
     public function getHasilTerakhir(): array {
@@ -177,3 +236,4 @@ class SAW {
         ")->fetchAll();
     }
 }
+
