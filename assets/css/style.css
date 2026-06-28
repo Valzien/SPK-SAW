@@ -1,0 +1,215 @@
+/* assets/css/style.css */
+
+:root {
+    --sidebar-width: 240px;
+    --topbar-height: 56px;
+    --sidebar-bg: #1e2a3a;
+    --sidebar-hover: rgba(255,255,255,.07);
+    --sidebar-active: #2563eb;
+    --primary: #2563eb;
+}
+
+/* ── LAYOUT ─────────────────────────────────────── */
+body { background: #f4f6fb; font-size: 14px; }
+
+.sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    color: #c9d6e3;
+    overflow-y: auto;
+    z-index: 1040;
+    transition: transform .25s ease;
+    padding-bottom: 2rem;
+}
+.sidebar-brand {
+    display: flex; align-items: center;
+    padding: 1.1rem 1.25rem .4rem;
+    font-size: 1.05rem; font-weight: 600; color: #fff;
+}
+.sidebar-subtitle {
+    font-size: 11px; color: #7a97b3;
+    padding: 0 1.25rem .5rem; line-height: 1.3;
+}
+.sidebar-divider { border-color: rgba(255,255,255,.08); margin: .5rem 1rem; }
+.sidebar-nav { padding: .25rem .75rem; }
+.nav-section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: #4d7096;
+    padding: .9rem .5rem .3rem;
+}
+.sidebar-nav .nav-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: .5rem .75rem; border-radius: 8px;
+    color: #a8c0d6; font-size: 13.5px;
+    transition: background .15s, color .15s;
+    margin-bottom: 2px;
+}
+.sidebar-nav .nav-link i { font-size: 16px; }
+.sidebar-nav .nav-link:hover { background: var(--sidebar-hover); color: #fff; }
+.sidebar-nav .nav-link.active { background: var(--sidebar-active); color: #fff; font-weight: 500; }
+
+.main-wrapper {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    transition: margin .25s ease;
+}
+.topbar {
+    height: var(--topbar-height);
+    background: #fff;
+    border-bottom: 1px solid #e8eaf0;
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 1.5rem;
+    position: sticky; top: 0; z-index: 100;
+}
+.topbar-title { font-weight: 600; font-size: 15px; color: #1e2a3a; }
+.page-content { padding: 1.5rem; }
+
+/* Sidebar collapsed */
+.sidebar-collapsed .sidebar { transform: translateX(calc(-1 * var(--sidebar-width))); }
+.sidebar-collapsed .main-wrapper { margin-left: 0; }
+
+/* ── CARDS ──────────────────────────────────────── */
+.card {
+    border: 1px solid #e8eaf0;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.card-header {
+    background: #fff;
+    border-bottom: 1px solid #e8eaf0;
+    border-radius: 12px 12px 0 0 !important;
+    padding: .85rem 1.25rem;
+    font-weight: 600; font-size: 14px;
+}
+
+/* Metric / stat cards */
+.stat-card {
+    background: #fff;
+    border: 1px solid #e8eaf0;
+    border-radius: 12px;
+    padding: 1.15rem 1.25rem;
+    display: flex; align-items: center; gap: 14px;
+}
+.stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+}
+.stat-label { font-size: 12px; color: #6b7a8d; margin-bottom: 2px; }
+.stat-value { font-size: 22px; font-weight: 700; color: #1e2a3a; line-height: 1; }
+.stat-sub   { font-size: 11px; color: #9aabb8; margin-top: 2px; }
+
+/* Winner card */
+.winner-card {
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+    border-radius: 14px; color: #fff; padding: 1.4rem 1.5rem;
+    display: flex; align-items: center; gap: 16px;
+}
+.winner-trophy { font-size: 3rem; line-height: 1; }
+.winner-label  { font-size: 11px; opacity: .75; text-transform: uppercase; letter-spacing: .06em; }
+.winner-name   { font-size: 1.2rem; font-weight: 700; margin: 4px 0; }
+.winner-score  { font-size: 2rem; font-weight: 800; }
+
+/* ── TABLES ─────────────────────────────────────── */
+.table { font-size: 13.5px; }
+.table th { font-size: 12px; font-weight: 600; color: #6b7a8d; white-space: nowrap; }
+.table-hover tbody tr:hover { background: #f0f4ff; }
+
+/* Rank badge */
+.rank-badge {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+}
+.rank-1 { background: #fef3c7; color: #b45309; }
+.rank-2 { background: #e2e8f0; color: #475569; }
+.rank-3 { background: #fce7d0; color: #9a3412; }
+.rank-n { background: #f1f5f9; color: #64748b; }
+
+/* Progress bar Vi */
+.vi-bar { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; min-width: 80px; }
+.vi-fill { height: 100%; border-radius: 4px; background: var(--primary); }
+
+/* ── FORMS ──────────────────────────────────────── */
+.form-label { font-weight: 500; font-size: 13px; color: #374151; }
+.form-control, .form-select {
+    font-size: 13.5px; border-color: #d1d9e6;
+    border-radius: 8px;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+}
+
+/* Benefit / cost badge */
+.badge-benefit { background: #dcfce7; color: #166534; font-weight: 500; }
+.badge-cost    { background: #fee2e2; color: #991b1b; font-weight: 500; }
+
+/* ── PROSES STEP ────────────────────────────────── */
+.step-card {
+    border: 1px solid #e8eaf0; border-radius: 12px;
+    padding: 1.25rem; background: #fff; margin-bottom: 1rem;
+}
+.step-number {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--primary); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+}
+.step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.step-title  { font-weight: 600; font-size: 14px; color: #1e2a3a; }
+.step-desc   { font-size: 12px; color: #6b7a8d; margin-top: 2px; }
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(calc(-1 * var(--sidebar-width))); }
+    .main-wrapper { margin-left: 0; }
+    .sidebar-open .sidebar { transform: translateX(0); }
+    .stat-value { font-size: 18px; }
+}
+
+/* ── SIDEBAR FOOTER / USER ──────────────────────── */
+.sidebar-footer {
+    position: sticky; bottom: 0;
+    background: var(--sidebar-bg);
+    border-top: 1px solid rgba(255,255,255,.08);
+    padding: .75rem .75rem .5rem;
+    margin-top: 1.5rem;
+}
+.sidebar-user {
+    font-size: 12px; color: #7a97b3;
+    padding: .35rem .5rem; margin-bottom: 4px;
+    display: flex; align-items: center;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sidebar-logout {
+    font-size: 13px; color: #f87171 !important;
+}
+.sidebar-logout:hover { background: rgba(248,113,113,.1) !important; color: #fca5a5 !important; }
+
+/* ── LOGIN ──────────────────────────────────────── */
+.fw-600 { font-weight: 600; }
+
+/* ── STEP CARD (proses) ─────────────────────────── */
+.step-card { border:1px solid #e8eaf0; border-radius:12px; padding:1.25rem; background:#fff; margin-bottom:1rem; }
+.step-number { width:32px; height:32px; border-radius:50%; background:var(--primary); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; }
+.step-header { display:flex; align-items:center; gap:12px; margin-bottom:1rem; }
+.step-title { font-weight:600; font-size:14px; color:#1e2a3a; }
+.step-desc { font-size:12px; color:#6b7a8d; margin-top:2px; }
+
+/* ── INFO BOX (dashboard) ───────────────────────── */
+.info-box { background:#fff; border:1px solid #e8eaf0; border-radius:12px; padding:1.5rem; }
+.info-box h6 { font-weight:600; font-size:14px; color:#1e2a3a; margin-bottom:.6rem; }
+.info-box p, .info-box li { font-size:13.5px; color:#374151; line-height:1.7; }
+.info-box ol { padding-left:1.25rem; margin-bottom:0; }
+.info-box li { margin-bottom:.35rem; }
+.info-divider { border-color:#e8eaf0; margin:1rem 0; }
+
+/* ── WINNER CARD ─────────────────────────────────── */
+.winner-card { background:linear-gradient(135deg,#1e2a3a 0%,#2563eb 100%); border-radius:14px; color:#fff; padding:1.4rem 1.5rem; display:flex; align-items:center; gap:16px; }
+.winner-icon-wrap { width:52px; height:52px; border-radius:12px; background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:24px; }
+.winner-label { font-size:11px; opacity:.7; text-transform:uppercase; letter-spacing:.06em; }
+.winner-name  { font-size:1.15rem; font-weight:700; margin:4px 0; }
+.winner-score { font-size:2rem; font-weight:800; }
